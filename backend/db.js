@@ -21,10 +21,13 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   });
 
   // Define the Book schema
-  const bookSchema = new mongoose.Schema({
+// Define the Book schema
+const bookSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
     procurementDate: { type: Date, required: true },
     quantity: { type: Number, required: true },
+    serialNumber: { type: Number, required: true, unique: true },
+    status: { type: String, default: 'Available' }
   });
   
   // Define the Movie schema
@@ -32,14 +35,23 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     name: { type: String, required: true, unique: true },
     procurementDate: { type: Date, required: true },
     quantity: { type: Number, required: true },
+    serialNumber: { type: Number, required: true, unique: true },
+    status: { type: String, default: 'Available' }
+  });
+
+  const userSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    status: { type: String, enum: ['active', 'inactive'], default: 'inactive' },
+    admin: { type: Boolean, default: false },
   });
   
   
   const Membership = mongoose.model('Membership', membershipSchema);
   const Book = mongoose.model('Book', bookSchema);
+  const User = mongoose.model('User', userSchema);
 
 // Create the Movie model
 const Movie = mongoose.model('Movie', movieSchema);
   
-  module.exports = {Membership,Book,Movie};
+  module.exports = {Membership,Book,Movie, User};
 
