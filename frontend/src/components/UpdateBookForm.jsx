@@ -3,19 +3,20 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const AddBookForm = () => {
+const UpdateBookForm = () => {
   const [formData, setFormData] = useState({
     type: 'Book',
     name: '',
-    procurementDate: '',
-    quantity: 1,
+    serialNo: '',
+    status: 'Available',
+    date: '',
   });
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: type === 'checkbox' ? checked : type === 'number' ? Number(value) : value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -23,16 +24,16 @@ const AddBookForm = () => {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.post('http://localhost:3001/api/v1/admin/addbookmovie', formData, {
+      const response = await axios.put('http://localhost:3001/api/v1/admin/updatebookmovie', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       console.log('Form submitted:', response.data);
-      toast.success(`${formData.type} added successfully.`);
+      toast.success(response.data.message);
     } catch (error) {
       console.error('Error submitting form:', error);
-      toast.error(`${formData.type} already exists.`);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -41,7 +42,7 @@ const AddBookForm = () => {
       <ToastContainer />
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
         <div className="p-8">
-          <h2 className="text-2xl font-bold text-indigo-900 mb-6">Add Book/Movie</h2>
+          <h2 className="text-2xl font-bold text-indigo-900 mb-6">Update Book/Movie</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700">Type</label>
@@ -81,14 +82,14 @@ const AddBookForm = () => {
             </div>
 
             <div>
-              <label htmlFor="procurementDate" className="block text-sm font-medium text-gray-700">
-                Date of Procurement
+              <label htmlFor="serialNo" className="block text-sm font-medium text-gray-700">
+                Serial No
               </label>
               <input
-                type="date"
-                id="procurementDate"
-                name="procurementDate"
-                value={formData.procurementDate}
+                type="text"
+                id="serialNo"
+                name="serialNo"
+                value={formData.serialNo}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 required
@@ -96,17 +97,36 @@ const AddBookForm = () => {
             </div>
 
             <div>
-              <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">
-                Quantity/Copies
+              <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+                Status
               </label>
-              <input
-                type="number"
-                id="quantity"
-                name="quantity"
-                value={formData.quantity}
+              <select
+                id="status"
+                name="status"
+                value={formData.status}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                min="1"
+                required
+              >
+                <option value="Available">Available</option>
+                <option value="Unavailable">Unavailable</option>
+                <option value="Removed">Removed</option>
+                <option value="On repair">On repair</option>
+                <option value="To replace">To replace</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+                Date
+              </label>
+              <input
+                type="date"
+                id="date"
+                name="date"
+                value={formData.date}
+                onChange={handleInputChange}
+                className="mt-1 block w-full border border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                 required
               />
             </div>
@@ -116,7 +136,7 @@ const AddBookForm = () => {
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                Add {formData.type}
+                Update {formData.type}
               </button>
             </div>
           </form>
@@ -126,4 +146,4 @@ const AddBookForm = () => {
   );
 };
 
-export default AddBookForm;
+export default UpdateBookForm;

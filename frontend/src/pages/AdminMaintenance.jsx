@@ -1,27 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, Book, UserCog, ChevronDown, ChevronUp, Plus, Edit, LogOut } from 'lucide-react';
-import UpdateMembershipForm from '../components/UpdateMembershipForm';
 import AddMembershipForm from '../components/AddMembershipForm';
+import UpdateMembershipForm from '../components/UpdateMembershipForm';
 import AddBookForm from '../components/AddBookForm';
+import UpdateBookForm from '../components/UpdateBookForm';
+import UserManagement from '../components/UserManagement';
 
 // SidebarItem component
 const SidebarItem = ({ icon: Icon, title, subItems, onItemClick }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const hasSubItems = subItems && subItems.length > 0; // Check if subItems exist
 
   return (
     <div className="mb-2">
       <button
         className="w-full flex items-center justify-between p-2 text-indigo-100 hover:bg-indigo-700 rounded transition-colors duration-150 ease-in-out"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => hasSubItems ? setIsOpen(!isOpen) : onItemClick(title)} // If no subItems, handle click directly
       >
         <div className="flex items-center">
           <Icon size={20} className="mr-2" />
           <span>{title}</span>
         </div>
-        {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+        {hasSubItems && (isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />)}
       </button>
-      {isOpen && (
+      {isOpen && hasSubItems && (
         <div className="ml-4 mt-2 space-y-2">
           {subItems.map((item, index) => (
             <button
@@ -72,11 +75,7 @@ const AdminMaintenance = () => {
     },
     {
       icon: UserCog,
-      title: 'User Management',
-      subItems: [
-        { icon: 'plus', title: 'Add User' },
-        { icon: 'edit', title: 'Update User' },
-      ],
+      title: 'User Management', // No subItems here
     },
   ];
 
@@ -101,8 +100,9 @@ const AdminMaintenance = () => {
         {selectedItem === 'Add Membership' && <AddMembershipForm />}
         {selectedItem === 'Update Membership' && <UpdateMembershipForm />}
         {selectedItem === 'Add Book/Movie' && <AddBookForm />}
+        {selectedItem === 'Update Book/Movie' && <UpdateBookForm />}
+        {selectedItem === 'User Management' && <UserManagement/>}
 
-        {/* Add other conditions for different forms/components */}
         {!selectedItem && (
           <div className="h-full flex items-center justify-center">
             <p className="text-2xl text-gray-500">Select an option from the sidebar</p>
