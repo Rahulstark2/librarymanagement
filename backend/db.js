@@ -41,6 +41,7 @@ const bookSchema = new mongoose.Schema({
 
   const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
+    password: { type: String, required: function() { return this.isNew; } }, // Password is required for new users
     status: { type: String, enum: ['active', 'inactive'], default: 'inactive' },
     admin: { type: Boolean, default: false },
   });

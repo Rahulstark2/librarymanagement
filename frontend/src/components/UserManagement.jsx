@@ -7,6 +7,7 @@ const UserManagement = () => {
   const [formData, setFormData] = useState({
     userType: 'New User',
     name: '',
+    password: '',
     status: false,
     admin: false,
   });
@@ -22,7 +23,11 @@ const UserManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-    const updatedFormData = { ...formData, status: formData.status ? 'active' : 'inactive' };
+    const updatedFormData = { 
+      ...formData, 
+      status: formData.status ? 'active' : 'inactive' 
+    };
+
     try {
       const response = await axios.post('http://localhost:3001/api/v1/admin/manageuser', updatedFormData, {
         headers: {
@@ -78,6 +83,23 @@ const UserManagement = () => {
                 required
               />
             </div>
+
+            {formData.userType === 'New User' && (
+             <div>
+             <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+             <input
+               type="password"
+               id="password"
+               name="password"
+               value={formData.password}
+               onChange={handleInputChange}
+               minLength="6"
+               className="mt-1 block w-full border border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+               required
+             />
+           </div>
+           
+            )}
 
             <div className="flex items-center">
               <input

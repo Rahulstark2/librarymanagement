@@ -5,6 +5,7 @@ const { authMiddleware } = require('../middleware');
 const router = express.Router();
 require('dotenv').config();
 const { Membership,Book,Movie,User } = require('../db');
+const bcrypt = require('bcrypt');
 
 
 // Define a schema for the login data
@@ -48,9 +49,10 @@ const updateMembershipSchema = z.object({
   });
 
   
-const userSchema = z.object({
+  const userSchema = z.object({
     userType: z.enum(['New User', 'Existing User']),
     name: z.string().min(1),
+    password: z.string().min(6), // Add password field
     status: z.enum(['active', 'inactive']),
     admin: z.boolean(),
   });
@@ -297,8 +299,9 @@ router.put('/updatemembership', authMiddleware, async (req, res) => {
 
   router.post('/manageuser', authMiddleware, async (req, res) => {
     try {
-      // Parse the request body against the schem
-      const { userType, name, status, admin } = userSchema.parse(req.body);
+      // Parse the request body against the schema
+      
+      const { userType, name, password, status, admin } = userSchema.parse(req.body);
   
       let user;
       if (userType === 'New User') {
@@ -308,13 +311,22 @@ router.put('/updatemembership', authMiddleware, async (req, res) => {
           return res.status(400).json({ message: 'User already exists' });
         }
   
-        // Create a new user
-        user = new User({ name, status, admin });
+        // Hash and salt the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+  
+        // Create a new user with the hashed password
+        user = new User({ name, password: hashedPassword, status, admin });
       } else {
         // Update an existing user
         user = await User.findOneAndUpdate({ name }, { status, admin }, { new: true });
         if (!user) {
           return res.status(404).json({ message: 'User not found' });
+        }
+  
+        // If the password is provided, hash and salt it and update the user's password
+        if (password) {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          user.password = hashedPassword;
         }
       }
   
@@ -323,12 +335,7 @@ router.put('/updatemembership', authMiddleware, async (req, res) => {
   
       res.status(200).json({ message: 'User managed successfully', data: user });
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        // If the error is a Zod error, send a 400 Bad Request response
-        res.status(400).json({ message: 'Invalid request body', errors: error.errors });
-      } else {
-        res.status(500).json({ message: 'Error managing user', error: error.message });
-      }
+      // ...
     }
   });
   
