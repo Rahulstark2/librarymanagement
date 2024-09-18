@@ -31,7 +31,7 @@ const Home = () => {
 
   const actions = [
     { icon: Wrench, title: 'Maintenance', to: '/adminhome/adminmaintenance' },
-    { icon: FileText, title: 'Reports', to: '/adminhome/adminreports' },
+    { icon: FileText, title: 'Reports', to: '/adminhome/reports' },
     { icon: ArrowLeftRight, title: 'Transactions', to: '/adminhome/admintransactions' },
   ];
 
