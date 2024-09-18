@@ -22,8 +22,9 @@ const UserManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
+    const updatedFormData = { ...formData, status: formData.status ? 'active' : 'inactive' };
     try {
-      const response = await axios.post('http://localhost:3001/api/v1/admin/manageuser', formData, {
+      const response = await axios.post('http://localhost:3001/api/v1/admin/manageuser', updatedFormData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -58,28 +58,43 @@ const userSchema = z.object({
   
 
 // Admin login route
-router.post('/adminlogin', (req, res) => {
-  // Try to parse the request body with the schema
-  const result = loginSchema.safeParse(req.body);
-
-  // If the data is invalid, return a 400 status code and the errors
-  if (!result.success) {
-    return res.status(400).json({ errors: result.error.format() });
-  }
-
-  const { username, password } = result.data;
-
-  // Here you would typically check the username and password against a database
-  // For this example, we'll just check if they're equal to 'admin'
-  if (username === 'admin' && password === 'admin') {
-    // If the credentials are valid, create a JWT
-    const secret = process.env.JWT_SECRET;
-    const token = jwt.sign({ username }, secret);
-    res.status(200).json({ message: 'Login successful', token });
-  } else {
-    res.status(401).json({ message: 'Invalid credentials' });
-  }
-});
+router.post('/adminlogin', async (req, res) => {
+    // Try to parse the request body with the schema
+    const result = loginSchema.safeParse(req.body);
+  
+    // If the data is invalid, return a 400 status code and the errors
+    if (!result.success) {
+      return res.status(400).json({ errors: result.error.format() });
+    }
+  
+    const { username, password } = result.data;
+  
+    try {
+      // First, check if username is 'admin'
+      if (username === 'admin' && password === 'admin') {
+        // If credentials are valid, create a JWT
+        const secret = process.env.JWT_SECRET;
+        const token = jwt.sign({ username }, secret);
+        return res.status(200).json({ message: 'Login successful', token });
+      }
+  
+      // If not 'admin', check if the username exists in the User model and admin field is true
+      const user = await User.findOne({ name: username, admin: true });
+  
+      // If user is found and password matches, generate a JWT
+      if (user) {
+        const secret = process.env.JWT_SECRET;
+        const token = jwt.sign({ username }, secret);
+        return res.status(200).json({ message: 'Login successful', token });
+      }
+  
+      // If credentials are invalid, return a 401 status
+      return res.status(401).json({ message: 'Invalid credentials' });
+    } catch (error) {
+      // Catch and handle any errors that occur
+      return res.status(500).json({ message: 'An error occurred during login', error });
+    }
+  });
 
 router.post('/addmembership', authMiddleware, async (req, res) => {
     // Try to parse the request body with the schema
@@ -239,7 +254,9 @@ router.put('/updatemembership', authMiddleware, async (req, res) => {
 
   router.put('/updatebookmovie', authMiddleware, async (req, res) => {
     // Try to parse the request body with the schema
+    c
     const result = updateBookMovieSchema.safeParse(req.body);
+    
   
     // If the data is invalid, return a 400 status code and the errors
     if (!result.success) {
@@ -280,7 +297,7 @@ router.put('/updatemembership', authMiddleware, async (req, res) => {
 
   router.post('/manageuser', authMiddleware, async (req, res) => {
     try {
-      // Parse the request body against the schema
+      // Parse the request body against the schem
       const { userType, name, status, admin } = userSchema.parse(req.body);
   
       let user;
