@@ -4,11 +4,9 @@ import { Wrench, FileText, ArrowLeftRight } from 'lucide-react';
 
 const ActionButton = ({ icon: Icon, title, to }) => {
   const navigate = useNavigate();
-
   const handleClick = () => {
     navigate(to);
   };
-
   return (
     <button
       onClick={handleClick}
@@ -22,18 +20,26 @@ const ActionButton = ({ icon: Icon, title, to }) => {
 
 const Home = () => {
   const navigate = useNavigate();
-  
+  const userRole = localStorage.getItem('role');
+
   const handleLogout = () => {
-    // Clear user authentication, session, or token here
     localStorage.removeItem('token');
-    navigate('/'); // Redirect to login page after logout
+    localStorage.removeItem('role');
+    navigate('/');
   };
 
-  const actions = [
+  const adminActions = [
     { icon: Wrench, title: 'Maintenance', to: '/adminhome/adminmaintenance' },
     { icon: FileText, title: 'Reports', to: '/adminhome/reports' },
-    { icon: ArrowLeftRight, title: 'Transactions', to: '/adminhome/admintransactions' },
+    { icon: ArrowLeftRight, title: 'Transactions', to: '/adminhome/transactions' },
   ];
+
+  const userActions = [
+    { icon: FileText, title: 'Reports', to: '/userhome/reports' },
+    { icon: ArrowLeftRight, title: 'Transactions', to: '/userhome/transactions' },
+  ];
+
+  const actions = userRole === 'admin' ? adminActions : userActions;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 flex flex-col justify-center items-center p-4">
@@ -43,13 +49,11 @@ const Home = () => {
         </h1>
         <p className="text-xl text-indigo-700">Select an action to proceed</p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+      <div className="flex flex-wrap justify-center gap-8 w-full max-w-4xl">
         {actions.map((action, index) => (
           <ActionButton key={index} {...action} />
         ))}
       </div>
-      
-      {/* Logout Button */}
       <button
         onClick={handleLogout}
         className="mt-8 bg-indigo-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-indigo-700 transition duration-300 ease-in-out"

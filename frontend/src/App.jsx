@@ -6,6 +6,7 @@ import UserLogin from './pages/UserLogin';
 import Home from './pages/Home';
 import AdminMaintenance from './pages/AdminMaintenance';
 import Reports from './pages/Reports';
+import Transactions from './pages/Transactions';
 
 function App() {
 
@@ -19,6 +20,11 @@ function App() {
         <Route path="/adminhome" element={<Home />}/>
         <Route path="/adminhome/adminmaintenance" element={<AdminMaintenance />}/>
         <Route path="/adminhome/reports" element={<Reports />}/>
+        <Route path="/userhome" element={<Home />}/>
+        <Route path="/userhome/reports" element={<Reports />}/>
+        <Route path="/adminhome/transactions" element={<Transactions />}/>
+
+        
         
 
         

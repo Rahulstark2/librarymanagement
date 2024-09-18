@@ -29,6 +29,7 @@ const UserManagement = () => {
     };
 
     try {
+      console.log(updatedFormData)
       const response = await axios.post('http://localhost:3001/api/v1/admin/manageuser', updatedFormData, {
         headers: {
           Authorization: `Bearer ${token}`,

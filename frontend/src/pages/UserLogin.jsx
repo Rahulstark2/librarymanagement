@@ -1,18 +1,32 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User } from 'lucide-react';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const UserLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = (e) => {
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Add user login logic here
-    console.log('User login attempted with:', { username, password });
+    try {
+      const response = await axios.post('http://localhost:3001/api/v1/user/userlogin', { username, password });
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('role','user');
+      toast.success(response.data.message);
+      navigate('/userhome'); // Redirect to user home page
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 flex flex-col justify-center items-center p-4">
+      <ToastContainer />
       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
         <div className="text-center mb-8">
           <User className="w-16 h-16 text-indigo-600 mx-auto mb-4" />
@@ -52,7 +66,6 @@ const UserLogin = () => {
             Login
           </button>
         </form>
-       
       </div>
     </div>
   );

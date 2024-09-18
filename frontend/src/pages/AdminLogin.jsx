@@ -16,6 +16,7 @@ const AdminLogin = () => {
     try {
       const response = await axios.post('http://localhost:3001/api/v1/admin/adminlogin', { username, password });
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('role','admin');
       toast.success(response.data.message);
       navigate('/adminhome'); // Redirect to admin home page
     } catch (error) {

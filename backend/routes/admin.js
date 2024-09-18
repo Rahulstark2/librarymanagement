@@ -52,7 +52,7 @@ const updateMembershipSchema = z.object({
   const userSchema = z.object({
     userType: z.enum(['New User', 'Existing User']),
     name: z.string().min(1),
-    password: z.string().min(6), // Add password field
+    password: z.string().optional(), // Allows the password field to be empty
     status: z.enum(['active', 'inactive']),
     admin: z.boolean(),
   });
@@ -83,11 +83,16 @@ router.post('/adminlogin', async (req, res) => {
       // If not 'admin', check if the username exists in the User model and admin field is true
       const user = await User.findOne({ name: username, admin: true });
   
-      // If user is found and password matches, generate a JWT
+      // If user is found, compare the provided password with the hashed password in the database
       if (user) {
-        const secret = process.env.JWT_SECRET;
-        const token = jwt.sign({ username }, secret);
-        return res.status(200).json({ message: 'Login successful', token });
+        const passwordMatch = await bcrypt.compare(password, user.password);
+  
+        // If passwords match, generate a JWT
+        if (passwordMatch) {
+          const secret = process.env.JWT_SECRET;
+          const token = jwt.sign({ username }, secret);
+          return res.status(200).json({ message: 'Login successful', token });
+        }
       }
   
       // If credentials are invalid, return a 401 status
@@ -97,6 +102,7 @@ router.post('/adminlogin', async (req, res) => {
       return res.status(500).json({ message: 'An error occurred during login', error });
     }
   });
+  
 
 router.post('/addmembership', authMiddleware, async (req, res) => {
     // Try to parse the request body with the schema
@@ -302,7 +308,6 @@ router.put('/updatemembership', authMiddleware, async (req, res) => {
       // Parse the request body against the schema
       
       const { userType, name, password, status, admin } = userSchema.parse(req.body);
-  
       let user;
       if (userType === 'New User') {
         // Check if the user already exists
