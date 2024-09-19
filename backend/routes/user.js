@@ -33,7 +33,8 @@ router.post('/userlogin', async (req, res) => {
     }
 
     // If the username and password are valid, create a JWT token
-    const token = jwt.sign(username, process.env.JWT_SECRET);
+    const secret = process.env.JWT_SECRET;
+    const token = jwt.sign({ username }, secret);
 
     // Return the token to the client
     res.json({ token, message: 'Login successful' });

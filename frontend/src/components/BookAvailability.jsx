@@ -4,23 +4,35 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+const SearchOptions = [
+  { value: 'book', label: 'Book' },
+  { value: 'movie', label: 'Movie' },
+];
+
 const BookAvailability = () => {
+  const [searchType, setSearchType] = useState(null);
   const [bookOptions, setBookOptions] = useState([]);
+  const [movieOptions, setMovieOptions] = useState([]);
   const [authorOptions, setAuthorOptions] = useState([]);
-  const [selectedBook, setSelectedBook] = useState(null);
-  const [selectedAuthor, setSelectedAuthor] = useState(null);
+  const [directorOptions, setDirectorOptions] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedPerson, setSelectedPerson] = useState(null);
 
   useEffect(() => {
-    // Fetch books and authors options from the API
+    // Fetch book and movie options from the API
     const fetchData = async () => {
       try {
-        const booksResponse = await axios.get('http://localhost:3001/api/v1/books');
-        const authorsResponse = await axios.get('http://localhost:3001/api/v1/authors');
-        setBookOptions(booksResponse.data.map(book => ({ value: book.id, label: book.name })));
-        setAuthorOptions(authorsResponse.data.map(author => ({ value: author.id, label: author.name })));
+        const response = await axios.get('http://localhost:3001/api/v1/transaction/check-availability', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+
+        setBookOptions(response.data.books.map(book => ({ value: book.id, label: book.name })));
+        setAuthorOptions(response.data.authors.map(author => ({ value: author.id, label: author.name })));
+        setMovieOptions(response.data.movies.map(movie => ({ value: movie.id, label: movie.name })));
+        setDirectorOptions(response.data.directors.map(director => ({ value: director.id, label: director.name })));
       } catch (error) {
         console.error('Error fetching data:', error);
-        toast.error('Error fetching books and authors');
+        toast.error('Error fetching books, movies, authors, and directors');
       }
     };
     fetchData();
@@ -28,19 +40,21 @@ const BookAvailability = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedBook || !selectedAuthor) {
-      toast.error('Please select both book and author');
+    if (!searchType || !selectedItem || !selectedPerson) {
+      toast.error('Please select search type, item, and author/director');
       return;
     }
 
+    const endpoint = searchType.value === 'book' ? 'books/availability' : 'movies/availability';
     try {
-      const response = await axios.get(`http://localhost:3001/api/v1/books/availability`, {
-        params: { bookId: selectedBook.value, authorId: selectedAuthor.value }
+      const response = await axios.get(`http://localhost:3001/api/v1/${endpoint}`, {
+        params: { itemId: selectedItem.value, personId: selectedPerson.value },
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      toast.success(`Book availability: ${response.data.available ? 'Available' : 'Not Available'}`);
+      toast.success(`${searchType.label} availability: ${response.data.available ? 'Available' : 'Not Available'}`);
     } catch (error) {
       console.error('Error checking availability:', error);
-      toast.error('Error checking book availability');
+      toast.error(`Error checking ${searchType.label} availability`);
     }
   };
 
@@ -49,32 +63,49 @@ const BookAvailability = () => {
       <ToastContainer />
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
         <div className="p-8">
-          <h2 className="text-2xl font-bold text-indigo-900 mb-6">Check Book Availability</h2>
+          <h2 className="text-2xl font-bold text-indigo-900 mb-6">Check Availability</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="bookName" className="block text-sm font-medium text-gray-700">Enter Book Name</label>
-                <Select
-                  id="bookName"
-                  options={bookOptions}
-                  value={selectedBook}
-                  onChange={setSelectedBook}
-                  className="mt-1 block w-full"
-                  placeholder="Select Book"
-                />
-              </div>
-              <div>
-                <label htmlFor="authorName" className="block text-sm font-medium text-gray-700">Enter Author Name</label>
-                <Select
-                  id="authorName"
-                  options={authorOptions}
-                  value={selectedAuthor}
-                  onChange={setSelectedAuthor}
-                  className="mt-1 block w-full"
-                  placeholder="Select Author"
-                />
-              </div>
+            <div>
+              <label htmlFor="searchType" className="block text-sm font-medium text-gray-700">Search for</label>
+              <Select
+                id="searchType"
+                options={SearchOptions}
+                value={searchType}
+                onChange={setSearchType}
+                className="mt-1 block w-full"
+                placeholder="Select Book or Movie"
+              />
             </div>
+            {searchType && (
+              <>
+                <div>
+                  <label htmlFor="itemName" className="block text-sm font-medium text-gray-700">
+                    {searchType.value === 'book' ? 'Enter Book Name' : 'Enter Movie Name'}
+                  </label>
+                  <Select
+                    id="itemName"
+                    options={searchType.value === 'book' ? bookOptions : movieOptions}
+                    value={selectedItem}
+                    onChange={setSelectedItem}
+                    className="mt-1 block w-full"
+                    placeholder={searchType.value === 'book' ? 'Select Book' : 'Select Movie'}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="personName" className="block text-sm font-medium text-gray-700">
+                    {searchType.value === 'book' ? 'Enter Author Name' : 'Enter Director Name'}
+                  </label>
+                  <Select
+                    id="personName"
+                    options={searchType.value === 'book' ? authorOptions : directorOptions}
+                    value={selectedPerson}
+                    onChange={setSelectedPerson}
+                    className="mt-1 block w-full"
+                    placeholder={searchType.value === 'book' ? 'Select Author' : 'Select Director'}
+                  />
+                </div>
+              </>
+            )}
             <div>
               <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 Check Availability

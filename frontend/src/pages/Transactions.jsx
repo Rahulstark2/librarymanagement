@@ -36,9 +36,9 @@ const Transactions = () => {
   };
 
   const transactionItems = [
-    { icon: Book, title: 'Check Book Availability' },
-    { icon: ClipboardCheck, title: 'Issue a Book' },
-    { icon: ClipboardX, title: 'Return a Book' },
+    { icon: Book, title: 'Check Book/Movie Availability' },
+    { icon: ClipboardCheck, title: 'Issue a Book/Movie' },
+    { icon: ClipboardX, title: 'Return a Book/Movie' },
     { icon: IndianRupeeIcon, title: 'Fine Payment' },
   ];
 
@@ -60,9 +60,9 @@ const Transactions = () => {
         </button>
       </div>
       <div className="flex-grow overflow-auto">
-        {selectedItem === 'Check Book Availability' && <BookAvailability />}
-        {selectedItem === 'Issue a Book' && <IssueBook />}
-        {selectedItem === 'Return a Book' && <ReturnBook />}
+        {selectedItem === 'Check Book/Movie Availability' && <BookAvailability />}
+        {selectedItem === 'Issue a Book/Movie' && <IssueBook />}
+        {selectedItem === 'Return a Book/Movie' && <ReturnBook />}
         {selectedItem === 'Fine Payment' && <FinePayment />}
 
         {!selectedItem && (
