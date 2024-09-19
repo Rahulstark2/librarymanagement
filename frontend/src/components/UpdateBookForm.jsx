@@ -24,6 +24,7 @@ const UpdateBookForm = () => {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
+      console.log(formData)
       const response = await axios.put('http://localhost:3001/api/v1/admin/updatebookmovie', formData, {
         headers: {
           Authorization: `Bearer ${token}`,

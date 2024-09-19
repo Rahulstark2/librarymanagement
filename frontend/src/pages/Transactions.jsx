@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Book, ClipboardCheck, ClipboardX, IndianRupeeIcon, LogOut } from 'lucide-react';
+import BookAvailability from '../components/BookAvailability';
 
 // SidebarItem component
 const SidebarItem = ({ icon: Icon, title, onItemClick }) => {
@@ -59,7 +60,7 @@ const Transactions = () => {
         </button>
       </div>
       <div className="flex-grow overflow-auto">
-        {selectedItem === 'Check Book Availability' && <CheckBookAvailability />}
+        {selectedItem === 'Check Book Availability' && <BookAvailability />}
         {selectedItem === 'Issue a Book' && <IssueBook />}
         {selectedItem === 'Return a Book' && <ReturnBook />}
         {selectedItem === 'Fine Payment' && <FinePayment />}

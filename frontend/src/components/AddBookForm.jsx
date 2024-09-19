@@ -10,20 +10,34 @@ const AddBookForm = () => {
     procurementDate: '',
     quantity: 1,
   });
+  const [authorName, setAuthorName] = useState('');
+  const [directorName, setDirectorName] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: type === 'checkbox' ? checked : type === 'number' ? Number(value) : value,
-    }));
+    if (name === 'author') {
+      setAuthorName(value);
+    } else if (name === 'director') {
+      setDirectorName(value);
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: type === 'checkbox' ? checked : type === 'number' ? Number(value) : value,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
+    const dataToSend = {
+      ...formData,
+      [formData.type === 'Book' ? 'author' : 'director']: formData.type === 'Book' ? authorName : directorName,
+    };
+    
     try {
-      const response = await axios.post('http://localhost:3001/api/v1/admin/addbookmovie', formData, {
+      console.log(dataToSend)
+      const response = await axios.post('http://localhost:3001/api/v1/admin/addbookmovie', dataToSend, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -79,6 +93,22 @@ const AddBookForm = () => {
                 required
               />
             </div>
+
+                        <div>
+                <label htmlFor="authorOrDirector" className="block text-sm font-medium text-gray-700">
+                    {formData.type === 'Book' ? 'Author\'s Name' : 'Director\'s Name'}
+                </label>
+                <input
+                    type="text"
+                    id="authorOrDirector"
+                    name={formData.type === 'Book' ? 'author' : 'director'}
+                    value={formData.type === 'Book' ? authorName : directorName}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full border border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    required
+                />
+                </div>
+
 
             <div>
               <label htmlFor="procurementDate" className="block text-sm font-medium text-gray-700">

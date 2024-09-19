@@ -24,20 +24,24 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 // Define the Book schema
 const bookSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
+    author: { type: String, required: true }, // Add this line
     procurementDate: { type: Date, required: true },
     quantity: { type: Number, required: true },
     serialNumber: { type: Number, required: true, unique: true },
     status: { type: String, default: 'Available' }
   });
   
+  
   // Define the Movie schema
   const movieSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
+    director: { type: String, required: true }, // Add this line
     procurementDate: { type: Date, required: true },
     quantity: { type: Number, required: true },
     serialNumber: { type: Number, required: true, unique: true },
     status: { type: String, default: 'Available' }
   });
+  
 
   const userSchema = new mongoose.Schema({
     name: { type: String, required: true },

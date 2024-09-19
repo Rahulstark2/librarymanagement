@@ -36,9 +36,20 @@ const updateMembershipSchema = z.object({
   const bookMovieSchema = z.object({
     type: z.enum(['Book', 'Movie']),
     name: z.string().min(1),
+    author: z.string().optional(), // Make author field optional
+    director: z.string().optional(), // Add director field
     procurementDate: z.string().min(1),
     quantity: z.number().min(1),
-  });
+  }).refine((data) => {
+    // Add conditional validation based on the type
+    if (data.type === 'Book') {
+      return data.author !== undefined;
+    } else if (data.type === 'Movie') {
+      return data.director !== undefined;
+    }
+    return false;
+  }, 'Either author or director is required');
+  
 
   const updateBookMovieSchema = z.object({
     type: z.enum(['Book', 'Movie']),
@@ -211,7 +222,7 @@ router.put('/updatemembership', authMiddleware, async (req, res) => {
       return res.status(400).json({ errors: result.error.format() });
     }
   
-    const { type, name, procurementDate, quantity } = result.data;
+    const { type, name, author, director, procurementDate, quantity } = result.data;
   
     try {
       let document;
@@ -220,7 +231,7 @@ router.put('/updatemembership', authMiddleware, async (req, res) => {
   
       if (type === 'Book') {
         // Check if the book already exists
-        const existingBook = await Book.findOne({ name });
+        const existingBook = await Book.findOne({ name, author });
         if (existingBook) {
           return res.status(400).json({ message: 'Book already exists' });
         }
@@ -232,10 +243,10 @@ router.put('/updatemembership', authMiddleware, async (req, res) => {
         // Generate a sequential serial number
         const serialNumber = lastSerialNumber + 1;
   
-        document = new Book({ name, procurementDate, quantity, serialNumber });
+        document = new Book({ name, author, procurementDate, quantity, serialNumber });
       } else {
         // Check if the movie already exists
-        const existingMovie = await Movie.findOne({ name });
+        const existingMovie = await Movie.findOne({ name, director });
         if (existingMovie) {
           return res.status(400).json({ message: 'Movie already exists' });
         }
@@ -247,7 +258,7 @@ router.put('/updatemembership', authMiddleware, async (req, res) => {
         // Generate a sequential serial number
         const serialNumber = lastSerialNumber + 1;
   
-        document = new Movie({ name, procurementDate, quantity, serialNumber });
+        document = new Movie({ name, director, procurementDate, quantity, serialNumber });
       }
   
       // Save the document to the database
@@ -259,10 +270,10 @@ router.put('/updatemembership', authMiddleware, async (req, res) => {
       res.status(500).json({ message: `Error adding ${type}` });
     }
   });
+  
 
   router.put('/updatebookmovie', authMiddleware, async (req, res) => {
     // Try to parse the request body with the schema
-    c
     const result = updateBookMovieSchema.safeParse(req.body);
     
   
