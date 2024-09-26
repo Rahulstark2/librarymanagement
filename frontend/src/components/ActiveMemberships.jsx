@@ -1,6 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import axios from 'axios';
 
 const ActiveMemberships = () => {
+  const [memberships, setMemberships] = useState([]);
+  const effectRan = useRef(false);
+
+  useEffect(() => {
+    if (effectRan.current === false) {
+      const fetchMemberships = async () => {
+        const token = localStorage.getItem('token');
+        const result = await axios.get('http://localhost:3001/api/v1/reports/active-membership', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        
+        console.log(result.data);
+        setMemberships(result.data);
+      };
+
+      fetchMemberships();
+
+      return () => {
+        effectRan.current = true;
+      };
+    }
+  }, []);
+
   const tableHeaders = [
     'Membership Id',
     'Name of Member',
@@ -28,18 +54,17 @@ const ActiveMemberships = () => {
             </tr>
           </thead>
           <tbody>
-            {/* Sample empty rows */}
-            {[...Array(4)].map((_, index) => (
-              <tr key={index} className="hover:bg-gray-100">
-                <td className="border px-4 py-2 text-gray-700">Membership {index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">Member Name {index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">1234567890</td>
-                <td className="border px-4 py-2 text-gray-700">123 Street, City</td>
-                <td className="border px-4 py-2 text-gray-700">XXXX-XXXX-XXXX</td>
-                <td className="border px-4 py-2 text-gray-700">Start Date {index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">End Date {index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">Active</td>
-                <td className="border px-4 py-2 text-gray-700">₹0.00</td>
+            {memberships.map((membership, index) => (
+              <tr key={membership.id} className="hover:bg-gray-100">
+                <td className="border px-4 py-2 text-gray-700">{membership.membershipId}</td>
+                <td className="border px-4 py-2 text-gray-700">{membership.memberName}</td>
+                <td className="border px-4 py-2 text-gray-700">{membership.contactNumber}</td>
+                <td className="border px-4 py-2 text-gray-700">{membership.contactAddress}</td>
+                <td className="border px-4 py-2 text-gray-700">{membership.aadharCardNo}</td>
+                <td className="border px-4 py-2 text-gray-700">{membership.startDate}</td>
+                <td className="border px-4 py-2 text-gray-700">{membership.endDate}</td>
+                <td className="border px-4 py-2 text-gray-700">{membership.status}</td>
+                <td className="border px-4 py-2 text-gray-700">₹{membership.amountPending}</td>
               </tr>
             ))}
           </tbody>

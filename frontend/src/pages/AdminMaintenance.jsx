@@ -7,16 +7,16 @@ import AddBookForm from '../components/AddBookForm';
 import UpdateBookForm from '../components/UpdateBookForm';
 import UserManagement from '../components/UserManagement';
 
-// SidebarItem component
+
 const SidebarItem = ({ icon: Icon, title, subItems, onItemClick }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const hasSubItems = subItems && subItems.length > 0; // Check if subItems exist
+  const hasSubItems = subItems && subItems.length > 0; 
 
   return (
     <div className="mb-2">
       <button
         className="w-full flex items-center justify-between p-2 text-indigo-100 hover:bg-indigo-700 rounded transition-colors duration-150 ease-in-out"
-        onClick={() => hasSubItems ? setIsOpen(!isOpen) : onItemClick(title)} // If no subItems, handle click directly
+        onClick={() => hasSubItems ? setIsOpen(!isOpen) : onItemClick(title)} 
       >
         <div className="flex items-center">
           <Icon size={20} className="mr-2" />
@@ -42,7 +42,7 @@ const SidebarItem = ({ icon: Icon, title, subItems, onItemClick }) => {
   );
 };
 
-// Main AdminMaintenance component
+
 const AdminMaintenance = () => {
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState(null);
@@ -76,7 +76,7 @@ const AdminMaintenance = () => {
     },
     {
       icon: UserCog,
-      title: 'User Management', // No subItems here
+      title: 'User Management',
     },
   ];
 

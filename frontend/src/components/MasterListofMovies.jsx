@@ -1,13 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import axios from 'axios';
 
 const MasterListofMovies = () => {
+  const [movies, setMovies] = useState([]);
+  const effectRan = useRef(false);
+
+  useEffect(() => {
+    if (effectRan.current === false) {
+      const fetchMovies = async () => {
+        const token = localStorage.getItem('token'); 
+        const result = await axios.get('http://localhost:3001/api/v1/reports/movies', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        console.log(result.data);
+        setMovies(result.data);
+      };
+
+      fetchMovies();
+
+      return () => {
+        effectRan.current = true;
+      };
+    }
+  }, []);
+
   const tableHeaders = [
     'Serial No',
     'Name of Movie',
-    'Author Name',
-    'Category',
+    'Director Name',
     'Status',
-    'Cost',
     'Procurement Date',
   ];
 
@@ -26,16 +50,13 @@ const MasterListofMovies = () => {
             </tr>
           </thead>
           <tbody>
-            {/* Sample empty rows */}
-            {[...Array(5)].map((_, index) => (
-              <tr key={index} className="hover:bg-gray-100">
+            {movies.map((movie, index) => (
+              <tr key={movie.id} className="hover:bg-gray-100">
                 <td className="border px-4 py-2 text-gray-700">{index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">Movie Name {index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">Author Name {index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">Category {index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">Available</td>
-                <td className="border px-4 py-2 text-gray-700">₹500.00</td>
-                <td className="border px-4 py-2 text-gray-700">Date {index + 1}</td>
+                <td className="border px-4 py-2 text-gray-700">{movie.name}</td>
+                <td className="border px-4 py-2 text-gray-700">{movie.directorName}</td>
+                <td className="border px-4 py-2 text-gray-700">{movie.status}</td>
+                <td className="border px-4 py-2 text-gray-700">{movie.procurementDate}</td>
               </tr>
             ))}
           </tbody>

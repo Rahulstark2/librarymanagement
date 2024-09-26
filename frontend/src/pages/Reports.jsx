@@ -8,7 +8,7 @@ import MasterListofBooks from '../components/MasterListofBooks';
 import OverdueReturns from '../components/OverdueReturns';
 import IssueRequests from '../components/IssueRequests';
 
-// SidebarItem component
+
 const SidebarItem = ({ icon: Icon, title, onItemClick }) => {
   return (
     <div className="mb-2">
@@ -25,7 +25,7 @@ const SidebarItem = ({ icon: Icon, title, onItemClick }) => {
   );
 };
 
-// Main Reports component
+
 const Reports = () => {
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState(null);

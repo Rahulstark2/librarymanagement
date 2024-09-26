@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Book, ClipboardCheck, ClipboardX, IndianRupeeIcon, LogOut } from 'lucide-react';
 import BookAvailability from '../components/BookAvailability';
+import BookIssue from '../components/BookIssue';
+import ReturnBook from '../components/ReturnBook';
+import PayFine from '../components/PayFine';
 
-// SidebarItem component
+
 const SidebarItem = ({ icon: Icon, title, onItemClick }) => {
   return (
     <div className="mb-2">
@@ -20,7 +23,7 @@ const SidebarItem = ({ icon: Icon, title, onItemClick }) => {
   );
 };
 
-// Main Transactions component
+
 const Transactions = () => {
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState(null);
@@ -61,9 +64,9 @@ const Transactions = () => {
       </div>
       <div className="flex-grow overflow-auto">
         {selectedItem === 'Check Book/Movie Availability' && <BookAvailability />}
-        {selectedItem === 'Issue a Book/Movie' && <IssueBook />}
+        {selectedItem === 'Issue a Book/Movie' && <BookIssue />}
         {selectedItem === 'Return a Book/Movie' && <ReturnBook />}
-        {selectedItem === 'Fine Payment' && <FinePayment />}
+        {selectedItem === 'Fine Payment' && <PayFine />}
 
         {!selectedItem && (
           <div className="h-full flex items-center justify-center">

@@ -9,6 +9,7 @@ const AddMembershipForm = () => {
     lastName: '',
     contactName: '',
     contactAddress: '',
+    contactNumber: '',
     aadharCardNo: '',
     startDate: '',
     endDate: '',
@@ -68,6 +69,11 @@ const AddMembershipForm = () => {
                 <label htmlFor="contactAddress" className="block text-sm font-medium text-gray-700">Contact Address</label>
                 <input type="text" id="contactAddress" name="contactAddress" value={formData.contactAddress} onChange={handleInputChange} className="mt-1 block w-full border border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required />
               </div>
+              <div>
+                <label htmlFor="contactNumber" className="block text-sm font-medium text-gray-700">Contact Number</label>
+                <input type="number" id="contactNumber" name="contactNumber" value={formData.contactNumber} onChange={handleInputChange} className="mt-1 block w-full border border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required />
+              </div>
+
               <div>
                 <label htmlFor="aadharCardNo" className="block text-sm font-medium text-gray-700">Aadhar Card No</label>
                 <input type="text" id="aadharCardNo" name="aadharCardNo" value={formData.aadharCardNo} onChange={handleInputChange} className="mt-1 block w-full border border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required />

@@ -9,7 +9,6 @@ const authMiddleware = (req, res, next) => {
     
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        
         return res.status(403).json({});
     }
 
@@ -18,11 +17,13 @@ const authMiddleware = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        // console.log(decoded.name)
+        
         if(decoded.username) {
         req.username = decoded.username;
+        
         next();
         } else {
+            
             return res.status(403).json({});
         }
     } catch (err) {

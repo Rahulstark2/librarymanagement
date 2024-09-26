@@ -18,7 +18,7 @@ const UserLogin = () => {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role','user');
       toast.success(response.data.message);
-      navigate('/userhome'); // Redirect to user home page
+      navigate('/userhome'); 
     } catch (error) {
       toast.error(error.response.data.message);
     }

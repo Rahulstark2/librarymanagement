@@ -1,6 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import axios from 'axios';
 
 const OverdueReturns = () => {
+  const [overdueItems, setOverdueItems] = useState([]);
+  const effectRan = useRef(false);
+
+  useEffect(() => {
+    if (effectRan.current === false) {
+      const fetchOverdueReturns = async () => {
+        const token = localStorage.getItem('token');
+        const result = await axios.get('http://localhost:3001/api/v1/reports/overdue-returns', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        console.log(result.data);
+        
+        setOverdueItems(result.data);
+      };
+
+      fetchOverdueReturns();
+
+      return () => {
+        effectRan.current = true;
+      };
+    }
+  }, []);
+
   const tableHeaders = [
     'Serial No Book/Movie',
     'Name of Book/Movie',
@@ -25,15 +51,19 @@ const OverdueReturns = () => {
             </tr>
           </thead>
           <tbody>
-            {/* Sample empty rows */}
-            {[...Array(5)].map((_, index) => (
-              <tr key={index} className="hover:bg-gray-100">
-                <td className="border px-4 py-2 text-gray-700">{index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">Book/Movie Name {index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">Membership {1000 + index}</td>
-                <td className="border px-4 py-2 text-gray-700">01-09-2024</td>
-                <td className="border px-4 py-2 text-gray-700">10-09-2024</td>
-                <td className="border px-4 py-2 text-gray-700">₹50.00</td>
+            {overdueItems.map((item, index) => (
+              <tr key={item.id} className="hover:bg-gray-100">
+                <td className="border px-4 py-2 text-gray-700">{item.serialNumber}</td>
+                <td className="border px-4 py-2 text-gray-700">
+                  <div className="flex">
+                    <div className="mr-1">{item.name}</div>
+                    <div>- ({item.type})</div>
+                  </div>
+                </td>
+                <td className="border px-4 py-2 text-gray-700">{item.membershipId}</td>
+                <td className="border px-4 py-2 text-gray-700">{item.issueDate}</td>
+                <td className="border px-4 py-2 text-gray-700">{item.returnDate}</td>
+                <td className="border px-4 py-2 text-gray-700">₹{item.fine}</td>
               </tr>
             ))}
           </tbody>

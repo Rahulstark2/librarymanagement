@@ -1,13 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import axios from 'axios';
 
 const MasterListofBooks = () => {
+  const [books, setBooks] = useState([]);
+  const effectRan = useRef(false);
+
+  useEffect(() => {
+    if (effectRan.current === false) {
+      const fetchBooks = async () => {
+        const token = localStorage.getItem('token');
+        const result = await axios.get('http://localhost:3001/api/v1/reports/books', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        console.log(result.data);
+        setBooks(result.data);
+      };
+
+      fetchBooks();
+
+      return () => {
+        effectRan.current = true;
+      };
+    }
+  }, []);
+
   const tableHeaders = [
     'Serial No',
     'Name of Book',
     'Author Name',
-    'Category',
     'Status',
-    'Cost',
     'Procurement Date',
   ];
 
@@ -26,16 +50,13 @@ const MasterListofBooks = () => {
             </tr>
           </thead>
           <tbody>
-            {/* Sample empty rows */}
-            {[...Array(5)].map((_, index) => (
-              <tr key={index} className="hover:bg-gray-100">
+            {books.map((book, index) => (
+              <tr key={book.id} className="hover:bg-gray-100">
                 <td className="border px-4 py-2 text-gray-700">{index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">Book Name {index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">Author Name {index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">Category {index + 1}</td>
-                <td className="border px-4 py-2 text-gray-700">Available</td>
-                <td className="border px-4 py-2 text-gray-700">₹500.00</td>
-                <td className="border px-4 py-2 text-gray-700">Date {index + 1}</td>
+                <td className="border px-4 py-2 text-gray-700">{book.name}</td>
+                <td className="border px-4 py-2 text-gray-700">{book.authorName}</td>
+                <td className="border px-4 py-2 text-gray-700">{book.status}</td>
+                <td className="border px-4 py-2 text-gray-700">{book.procurementDate}</td>
               </tr>
             ))}
           </tbody>

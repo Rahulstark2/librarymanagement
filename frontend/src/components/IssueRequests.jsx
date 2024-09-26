@@ -23,7 +23,7 @@ const IssueRequests = () => {
             </tr>
           </thead>
           <tbody>
-            {/* Sample empty rows */}
+            
             {[...Array(5)].map((_, index) => (
               <tr key={index} className="hover:bg-gray-100">
                 <td className="border px-4 py-2 text-gray-700">Membership {1000 + index}</td>

@@ -18,7 +18,7 @@ const AdminLogin = () => {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role','admin');
       toast.success(response.data.message);
-      navigate('/adminhome'); // Redirect to admin home page
+      navigate('/adminhome'); 
     } catch (error) {
       toast.error(error.response.data.message);
     }
