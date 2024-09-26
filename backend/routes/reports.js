@@ -154,10 +154,11 @@ router.get('/active-issues', authMiddleware, async (req, res) => {
   router.get('/overdue-returns', authMiddleware, async (req, res) => {
     try {
     
-      const membership = await Membership.findOne({ username: req.username });
+      const membership = await Membership.findOne({ firstName: req.username });
       
      
       if (!membership) {
+        
         return res.status(404).json({ message: 'Membership not found' });
       }
   

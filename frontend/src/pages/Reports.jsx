@@ -6,8 +6,6 @@ import ActiveMemberships from '../components/ActiveMemberships';
 import MasterListofMovies from '../components/MasterListofMovies';
 import MasterListofBooks from '../components/MasterListofBooks';
 import OverdueReturns from '../components/OverdueReturns';
-import IssueRequests from '../components/IssueRequests';
-
 
 const SidebarItem = ({ icon: Icon, title, onItemClick }) => {
   return (
@@ -24,7 +22,6 @@ const SidebarItem = ({ icon: Icon, title, onItemClick }) => {
     </div>
   );
 };
-
 
 const Reports = () => {
   const navigate = useNavigate();
@@ -46,7 +43,7 @@ const Reports = () => {
     { icon: FileText, title: 'Master List of Movies' },
     { icon: FileText, title: 'Master List of Books' },
     { icon: FileText, title: 'Overdue Returns' },
-    { icon: FileText, title: 'Pending Issues Request' },
+   
   ];
 
   return (
@@ -72,8 +69,7 @@ const Reports = () => {
         {selectedItem === 'Master List of Movies' && <MasterListofMovies />}
         {selectedItem === 'Master List of Books' && <MasterListofBooks />}
         {selectedItem === 'Overdue Returns' && <OverdueReturns />}
-        {selectedItem === 'Pending Issues Request' && <IssueRequests />}
-
+       
         {!selectedItem && (
           <div className="h-full flex items-center justify-center">
             <p className="text-2xl text-gray-500">Select a report from the sidebar</p>
