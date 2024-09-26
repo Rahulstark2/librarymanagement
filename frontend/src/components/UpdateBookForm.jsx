@@ -124,6 +124,7 @@ const UpdateBookForm = () => {
               <input
                 type="date"
                 id="date"
+                min={new Date().toISOString().split('T')[0]} 
                 name="date"
                 value={formData.date}
                 onChange={handleInputChange}

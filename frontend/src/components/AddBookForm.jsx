@@ -116,6 +116,7 @@ const AddBookForm = () => {
               </label>
               <input
                 type="date"
+                min={new Date().toISOString().split('T')[0]} 
                 id="procurementDate"
                 name="procurementDate"
                 value={formData.procurementDate}

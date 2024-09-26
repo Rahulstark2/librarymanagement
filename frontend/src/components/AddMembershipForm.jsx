@@ -82,11 +82,11 @@ const AddMembershipForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Start Date</label>
-                <input type="date" id="startDate" name="startDate" value={formData.startDate} onChange={handleInputChange} className="mt-1 block w-full border border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required />
+                <input type="date" min={new Date().toISOString().split('T')[0]} id="startDate" name="startDate" value={formData.startDate} onChange={handleInputChange} className="mt-1 block w-full border border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required />
               </div>
               <div>
                 <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">End Date</label>
-                <input type="date" id="endDate" name="endDate" value={formData.endDate} onChange={handleInputChange} className="mt-1 block w-full border border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required />
+                <input type="date"   min={formData.startDate} id="endDate" name="endDate" value={formData.endDate} onChange={handleInputChange} className="mt-1 block w-full border border-black rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required />
               </div>
             </div>
             <div>

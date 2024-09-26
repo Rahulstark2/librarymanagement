@@ -65,6 +65,7 @@ const UpdateMembershipForm = () => {
                 <input
                   type="date"
                   id="startDate"
+                  min={new Date().toISOString().split('T')[0]}
                   name="startDate"
                   value={formData.startDate}
                   onChange={handleInputChange}
@@ -77,6 +78,7 @@ const UpdateMembershipForm = () => {
                 <input
                   type="date"
                   id="endDate"
+                  min={formData.startDate}
                   name="endDate"
                   value={formData.endDate}
                   onChange={handleInputChange}
